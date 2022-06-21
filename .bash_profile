@@ -2,7 +2,7 @@
 #-------------------------------------------------------------
 # Version
 #-------------------------------------------------------------
-version=29
+version=31
 
 #-------------------------------------------------------------
 # Default settings. Saved after an update
@@ -10,9 +10,6 @@ version=29
 startUpFolder=/C/Users/mgeha/source/repos/ajour-web
 autoUpdate=true
 betaUpdate=false
-myGitUser=
-buddyGitUser=
-buddyBranch="BuddyBranch"
 fixGitPromptShowBranch=true
 
 #-------------------------------------------------------------
@@ -357,122 +354,6 @@ function getScript() {
 
 #command echos
 
-
-#functions
-function buddy () {
-  if [ -z "$buddyBranch" ] || [ $buddyBranch = '' ];
-  then
-    echo "You need to configure your buddy branch variable (buddyBranch)!"
-    return 0
-  fi
-  
-  if [ -z "$myGitUser" ] || [ $myGitUser = '' ];
-  then
-    echo "You need to configure your github user variable (myGitUser)!"
-    return 0
-  fi
-  
-  if [ -z "$buddyGitUser" ] || [ $buddyGitUser = '' ];
-  then
-    echo "You need to configure your buddy github user variable (buddyGitUser)!"
-    return 0
-  fi
-  
-  local repo=`git remote -v | grep push | head -n 1 | sed -e "s/.*github.com[:/]\(.*\)\.git.*/\1/"`
-  local branch=$(getCurrentBranch);
-  local targetbranch=$buddyBranch
-  local targetrepo="${repo/$myGitUser/$buddyGitUser}"
-  
-  if ! [ -z "$1" ] && [[ $1 != *[!0-9]* ]];
-  then
-    targetbranch=$buddyBranch$1
-  fi
-  
-  echo "... creating pull request for branch \"$branch\" in \"$repo\" to buddy repo \"$targetrepo\" target branch \"$targetbranch\" "    
-  
-  targetbranch="$targetbranch..."
-  branch="$myGitUser:$branch"
-
-  explorer https://github.com/$targetrepo/pull/new/"$targetbranch$branch"
-}
-
-function resetbuddy () {
-  if [ -z "$buddyBranch" ] || [ $buddyBranch = '' ];
-  then
-    echo "You need to configure your buddy branch variable (buddyBranch)!"
-    return 0
-  fi
-
-  ch master
-  sync
-  
-  local targetBranch=$buddyBranch
-  
-  if ! [ -z "$1" ] && [[ $1 != *[!0-9]* ]];
-  then
-    targetBranch=$buddyBranch$1
-  fi
-  
-  if ! [ -z "$1" ] && [ $1 = 'all' ];
-  then
-    echo "This will wipe $buddyBranch 1 - 10 in your fork, are you sure you wish to continue? [YES]/[NO]"
-    echo "Note: This will also remove any open pull requests to the branches"
-    read continue
-    if [ $continue == 'YES' ] 
-    then
-      for (( index=1 ; index<=10 ; index++ )) ; do
-        git checkout -B $buddyBranch$index
-        if [ $? != 0 ]
-        then
-		  echo "ERROR! Could not check out branch $buddyBranch$index"
-          return 1
-        fi
-        git push origin $buddyBranch$index -f
-        if [ $? != 0 ]
-        then
-		  echo "ERROR! Could not force pushe branch $buddyBranch$index"
-          return 1
-        fi
-		echo "Successfully reset branch $buddyBranch$index"
-        ch master
-      done
-	  echo "Branches $buddyBranch 1 - 10 reset"
-    fi
-  else
-    echo "This will wipe $targetBranch in your fork, are you sure you wish to continue? [YES]/[NO]"
-    echo "Note: This will also remove any open pull requests to the branch"
-    read continue
-    if [ $continue == 'YES' ] 
-    then
-      git checkout -B $targetBranch
-      if [ $? != 0 ]
-      then
-	    echo "ERROR! Could not check out branch $targetBranch"
-        return 1
-      fi
-      git push origin $targetBranch -f
-      if [ $? != 0 ]
-      then
-	    echo "ERROR! Could not force push branch $targetBranch"
-        return 1
-      fi
-	  echo "Successfully reset branch $targetBranch"
-      ch master
-    fi
-  fi
-}
-
-function chb () {
-  local targetBranch=$buddyBranch
-  
-  if ! [ -z "$1" ] && [[ $1 != *[!0-9]* ]];
-  then
-    targetBranch=$buddyBranch$1
-  fi
-  
-  ch $targetBranch
-}
-
 function fixGitPrompt () {
 	echo "Fixing weirdness so git bash shows the current branch name"
 	update_PS1 () {
@@ -497,17 +378,12 @@ function commands {
   echo "request : Create a pull request on GitHub"    
   echo "sup : Updates and init submodules on current branch" 
   echo "sync : Synchronize upstream with local git. Remember to push after."
-  echo "buddy : Creates a pull request from current branch to your buddy's buddybranch."
-  echo "	Optional parameter, e.g. buddy 5 - creates pull request for buddybranch5"
-  echo "resetbuddy : Resets your own buddybranch to the current upstream/master revision."
-  echo "	THIS DELETES ALL COMMITS/PULL REQUESTS ON THE BRANCH(ES)!"
-  echo "	Optional parameter, e.g. resetbuddy 5 (resets your buddybranch5), resetbuddy all (resets branches 1-10)"
 }
 
 #-------------------------------------------------------------
 #Startup Scripts
 #-------------------------------------------------------------
-echo "Hello. Super magical Script"
+echo "Hello. Super magical Script - Running version " $version
 
 echo "Beginning"
 
