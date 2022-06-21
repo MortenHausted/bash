@@ -15,7 +15,7 @@ fixGitPromptShowBranch=true
 #-------------------------------------------------------------
 # Aliases
 #-------------------------------------------------------------
-alias status="git status"
+alias s="git status"
 alias log="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold cyan)<%an>%Creset' --abbrev-commit"
 
 #-------------------------------------------------------------
