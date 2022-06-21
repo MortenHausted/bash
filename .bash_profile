@@ -2,12 +2,12 @@
 #-------------------------------------------------------------
 # Version
 #-------------------------------------------------------------
-version=27
+version=29
 
 #-------------------------------------------------------------
 # Default settings. Saved after an update
 #-------------------------------------------------------------
-startUpFolder=/c/Work/WebVersion
+startUpFolder=/C/Users/mgeha/source/repos/ajour-web
 autoUpdate=true
 betaUpdate=false
 myGitUser=
@@ -344,8 +344,8 @@ function getScript() {
       rm -rf $tmpnewfile >> /dev/null
     fi
 
-      echo "Getting script from dljs Git"
-      curl -s -o $tmpnewfile https://raw.githubusercontent.com/dlj/Bash/master/.bash_profile?rand=$RANDOM
+      echo "Getting script from Git"
+      curl -s -o $tmpnewfile https://raw.githubusercontent.com/MortenHausted/bash/main/.bash_profile?rand=$RANDOM
   
   if [ ! -f $tmpnewfile ]; then
       echo "No update file found, exitting";
@@ -507,7 +507,7 @@ function commands {
 #-------------------------------------------------------------
 #Startup Scripts
 #-------------------------------------------------------------
-echo "Hello. Super magical DLJ Script"
+echo "Hello. Super magical Script"
 
 echo "Beginning"
 
